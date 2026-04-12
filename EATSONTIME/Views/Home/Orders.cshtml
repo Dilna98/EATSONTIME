@@ -1,0 +1,169 @@
+@using EATSONTIME.Models
+@model List<Orders>
+@{
+    ViewData["Title"] = "My Orders — EATSONTIME";
+
+    // Map status → progress step index (0-based)
+    int GetStep(string status) => status switch
+    {
+        "Placed"             => 0,
+        "Confirmed"          => 1,
+        "Preparing"          => 2,
+        "Out for Delivery"   => 2,
+        "Delivered"          => 3,
+        _                    => 0
+    };
+
+    string GetStatusClass(string status) => status switch
+    {
+        "Placed"           => "ets-order-status--placed",
+        "Confirmed"        => "ets-order-status--confirmed",
+        "Preparing"        => "ets-order-status--preparing",
+        "Out for Delivery" => "ets-order-status--preparing",
+        "Delivered"        => "ets-order-status--delivered",
+        "Cancelled"        => "ets-order-status--cancelled",
+        _                  => "ets-order-status--placed"
+    };
+
+    var steps = new[] {
+        new { Label = "Placed",    Icon = "fas fa-clipboard-check" },
+        new { Label = "Confirmed", Icon = "fas fa-store"           },
+        new { Label = "Preparing", Icon = "fas fa-fire"            },
+        new { Label = "Delivered", Icon = "fas fa-check"           }
+    };
+
+    var restaurantNames = new[] { "Biryani Palace", "Pizza Hub", "Burger Nation", "Spice Garden", "Wok & Roll" };
+    var foodItems = new[] {
+        "Chicken Biryani × 2, Raita × 1",
+        "Margherita Pizza × 1, Garlic Bread × 2",
+        "Veg Burger × 2, Fries × 1, Cold Drink × 2",
+        "Paneer Tikka × 1, Jeera Rice × 2",
+        "Fried Rice × 2, Manchurian × 1"
+    };
+}
+
+<div class="ets-orders-page">
+    <h1>📦 My Orders</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="ets-empty">
+            <i class="fas fa-box-open"></i>
+            <h3>No orders yet</h3>
+            <p>Looks like you haven't ordered anything yet. Let's fix that!</p>
+            <a href="/" class="ets-btn ets-btn--primary" id="browse-restaurants-btn">
+                <i class="fas fa-utensils"></i> Browse Restaurants
+            </a>
+        </div>
+    }
+    else
+    {
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var order = Model[i];
+            var step  = GetStep(order.Status ?? "Placed");
+            var rName = restaurantNames[i % restaurantNames.Length];
+            var items = foodItems[i % foodItems.Length];
+
+            <div class="ets-order-card ets-animate" id="order-card-@order.OrderId">
+
+                <!-- Header -->
+                <div class="ets-order-card__header">
+                    <div>
+                        <div class="ets-order-card__id">Order #@order.OrderId</div>
+                        <div class="ets-order-card__restaurant">🍽️ @rName</div>
+                    </div>
+                    <div>
+                        <div class="ets-order-card__date">
+                            @order.OrderDate.ToString("dd MMM yyyy, hh:mm tt")
+                        </div>
+                        <div style="text-align:right;margin-top:6px;">
+                            <span class="ets-order-status @GetStatusClass(order.Status ?? "Placed")">
+                                @if (order.Status == "Delivered") { <text><i class="fas fa-check-circle"></i></text> }
+                                else if (order.Status == "Preparing" || order.Status == "Out for Delivery") { <text><i class="fas fa-fire"></i></text> }
+                                else { <text><i class="fas fa-circle"></i></text> }
+                                @(order.Status ?? "Placed")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Track -->
+                @if (order.Status != "Cancelled")
+                {
+                    <div class="ets-progress-track">
+                        @for (int s = 0; s < steps.Length; s++)
+                        {
+                            var isDone   = s < step;
+                            var isActive = s == step;
+                            var cls = isDone ? "ets-progress-step--done" : (isActive ? "ets-progress-step--active" : "");
+                            <div class="ets-progress-step @cls">
+                                <div class="ets-progress-step__dot">
+                                    @if (isDone) { <text><i class="fas fa-check" style="font-size:11px;"></i></text> }
+                                    else         { <text><i class="@steps[s].Icon" style="font-size:11px;"></i></text> }
+                                </div>
+                                <div class="ets-progress-step__label">@steps[s].Label</div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!-- Items -->
+                <div class="ets-order-card__items">
+                    <div class="ets-order-card__item">
+                        <span style="color:var(--dark-light);">@items</span>
+                    </div>
+                    <div class="ets-order-card__total">
+                        <span>Total Paid</span>
+                        <span style="color:var(--orange);">₹@order.TotalAmount.ToString("0.00")</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="ets-order-card__actions">
+                    <a href="/" class="ets-btn ets-btn--primary" style="font-size:0.85rem;padding:8px 18px;"
+                       id="reorder-btn-@order.OrderId">
+                        <i class="fas fa-redo"></i> Reorder
+                    </a>
+                    @if (order.Status == "Preparing" || order.Status == "Out for Delivery")
+                    {
+                        <button class="ets-btn ets-btn--outline" style="font-size:0.85rem;padding:8px 18px;"
+                                onclick="showToast('📍 Your order is on the way!')"
+                                id="track-btn-@order.OrderId">
+                            <i class="fas fa-map-marker-alt"></i> Track Order
+                        </button>
+                    }
+                    @if (order.Status == "Delivered")
+                    {
+                        <button class="ets-btn ets-btn--outline" style="font-size:0.85rem;padding:8px 18px;border-color:#f5a623;color:#f5a623;"
+                                onclick="showToast('⭐ Thanks for rating!')"
+                                id="rate-btn-@order.OrderId">
+                            <i class="fas fa-star"></i> Rate Order
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+<script>
+    // Animate cards on scroll
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.ets-order-card').forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = `opacity 0.4s ease ${i * 0.1}s, transform 0.4s ease ${i * 0.1}s`;
+        observer.observe(card);
+    });
+</script>
+}

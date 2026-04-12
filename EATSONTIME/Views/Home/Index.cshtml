@@ -1,8 +1,225 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@using EATSONTIME.Models
+@{
+    ViewData["Title"] = "Order Food Online — EATSONTIME";
+    var restaurants = ViewBag.Restaurants as List<Restaurant> ?? new List<Restaurant>();
+    var categories  = ViewBag.Categories  as List<string>     ?? new List<string>();
+    var search      = ViewBag.Search      as string ?? "";
+
+    // Sample data for richer card display
+    var ratings      = new[] { "4.5", "4.2", "4.7", "4.1", "4.6", "4.3", "4.8", "4.0" };
+    var times        = new[] { "25-30", "30-40", "20-25", "35-45", "15-20", "40-50", "22-28", "28-35" };
+    var cuisines     = new[] { "Biryani • Mughlai • North Indian", "Italian • Pizza • Pasta",
+                               "American • Burgers • Fries", "Chinese • Thai • Asian",
+                               "Desserts • Ice Cream • Cakes", "South Indian • Kerala",
+                               "Continental • Salads • Healthy", "Japanese • Sushi • Ramen" };
+    var discounts    = new[] { "50% OFF up to ₹100", "Free Delivery", "30% OFF", "₹75 OFF",
+                               "Buy 1 Get 1", "₹50 OFF above ₹199", "New on EATSONTIME", "20% OFF" };
+    var emojis       = new[] { "🍛", "🍕", "🍔", "🍜", "🍩", "🥘", "🥗", "🍣" };
+    var bgColors     = new[] { "#fff3e8", "#fce4ec", "#e8f5e9", "#e3f2fd",
+                               "#f3e5f5", "#fff8e1", "#e0f7fa", "#fbe9e7" };
 }
 
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> *@
+<!-- ====== HERO ====== -->
+<section class="ets-hero">
+    <div class="ets-hero__inner ets-animate">
+        <span class="ets-hero__tag">🚀 Fast Delivery</span>
+        <h1>Order food &amp; <span>groceries</span><br>delivered to you</h1>
+        <p>Discover the best restaurants &amp; cafés near you.<br>Fresh food delivered hot in 30 minutes or less.</p>
+        <form class="ets-hero__search" action="/" method="get" id="hero-search-form">
+            <input
+                type="text"
+                name="search"
+                value="@search"
+                placeholder="Search restaurants, cuisines, dishes..."
+                id="hero-search-input"
+                autocomplete="off">
+            <button type="submit" id="hero-search-btn">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+        <div class="ets-hero__stats ets-animate ets-animate-delay-1">
+            <div class="ets-hero__stat">
+                <strong>500+</strong>
+                <span>Restaurants</span>
+            </div>
+            <div class="ets-hero__stat">
+                <strong>30 min</strong>
+                <span>Avg Delivery</span>
+            </div>
+            <div class="ets-hero__stat">
+                <strong>10K+</strong>
+                <span>Happy Customers</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CATEGORY PILLS ====== -->
+<div class="ets-categories">
+    <div class="ets-categories__strip" id="category-strip">
+        <span class="ets-cat-pill active" id="cat-all" onclick="filterCategory(this, '')">
+            🍽️ All
+        </span>
+        @foreach (var cat in categories)
+        {
+            <span class="ets-cat-pill" onclick="filterCategory(this, '@cat')" id="cat-@cat.Replace(" ","").Replace("🍔","").Replace("🍕","").Replace("🍜","").Replace("🌮","").Replace("🥗","").Replace("🍩","").Replace("🥪","").Replace("🍣","").Replace("🥞","")">
+                @cat
+            </span>
+        }
+    </div>
+</div>
+
+<!-- ====== OFFER BANNER ====== -->
+<div class="ets-offer-banner ets-animate ets-animate-delay-2">
+    <div>
+        <h3>🎉 Limited Time Offer</h3>
+        <p>Get 50% off on your first 3 orders. Use code <strong>WELCOME50</strong></p>
+    </div>
+    <a href="#restaurants-section" class="ets-offer-banner__cta">Order Now →</a>
+</div>
+
+<!-- ====== RESTAURANTS SECTION ====== -->
+<section class="ets-section" id="restaurants-section">
+    <div class="ets-section__header">
+        <h2 class="ets-section__title" id="restaurants-heading">
+            @if (!string.IsNullOrEmpty(search))
+            {
+                <span>Results for "<em>@search</em>"</span>
+            }
+            else
+            {
+                <span>🔥 Popular Restaurants Near You</span>
+            }
+        </h2>
+        <a href="/" class="ets-section__link" id="see-all-link">
+            See all <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    @if (!restaurants.Any())
+    {
+        <div class="ets-empty">
+            <i class="fas fa-store-slash"></i>
+            <h3>No restaurants found</h3>
+            <p>Try a different search term or browse all restaurants.</p>
+            <a href="/" class="ets-btn ets-btn--primary">Browse All</a>
+        </div>
+    }
+    else
+    {
+        <div class="ets-restaurants-grid" id="restaurants-grid">
+            @for (int i = 0; i < restaurants.Count; i++)
+            {
+                var r         = restaurants[i];
+                var idx       = i % emojis.Length;
+                var rating    = ratings[idx];
+                var time      = times[idx];
+                var cuisine   = cuisines[idx];
+                var discount  = discounts[idx];
+                var emoji     = emojis[idx];
+                var bg        = bgColors[idx];
+
+                <div class="ets-restaurant-card ets-animate ets-animate-delay-@((i % 3) + 1)"
+                     id="restaurant-card-@r.RestaurentId"
+                     onclick="window.location='#'">
+                    <div class="ets-restaurant-card__img-wrap"
+                         style="background: linear-gradient(135deg, @bg, #fff);">
+                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">
+                            @emoji
+                        </div>
+                        <span class="ets-restaurant-card__badge">@discount</span>
+                        <span class="ets-restaurant-card__fav" title="Add to favourites"
+                              onclick="toggleFav(event, this)">
+                            <i class="far fa-heart"></i>
+                        </span>
+                    </div>
+                    <div class="ets-restaurant-card__body">
+                        <div class="ets-restaurant-card__name" title="@r.Name">@r.Name</div>
+                        <div class="ets-restaurant-card__cuisine">@cuisine</div>
+                        <div class="ets-restaurant-card__meta">
+                            <span class="ets-restaurant-card__rating">
+                                <i class="fas fa-star" style="font-size:10px;"></i> @rating
+                            </span>
+                            <span class="ets-restaurant-card__time">
+                                <i class="fas fa-clock"></i> @time mins
+                            </span>
+                            <span class="ets-restaurant-card__min">₹150 for two</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+<!-- ====== QUICK REORDER SECTION ====== -->
+<section class="ets-section" style="background:#fff; padding-bottom:40px;">
+    <div class="ets-section__header">
+        <h2 class="ets-section__title">📦 My Recent Orders</h2>
+        <a href="/Home/Orders" class="ets-section__link" id="view-all-orders-link">
+            View all <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;">
+        @{
+            var recentItems = new[]
+            {
+                new { Name = "Chicken Biryani",   Rest = "Biryani Palace",  Price = "₹220", Emoji = "🍛", Status = "Delivered" },
+                new { Name = "Margherita Pizza",  Rest = "Pizza Hub",       Price = "₹280", Emoji = "🍕", Status = "Delivered" },
+                new { Name = "Veg Burger Combo",  Rest = "Burger Nation",   Price = "₹180", Emoji = "🍔", Status = "Preparing" },
+            };
+        }
+        @foreach (var item in recentItems)
+        {
+            <div style="background:var(--bg);border-radius:12px;padding:16px;min-width:200px;flex-shrink:0;cursor:pointer;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--card-hover)'" onmouseout="this.style.boxShadow='none'">
+                <div style="font-size:2.2rem;margin-bottom:8px;">@item.Emoji</div>
+                <div style="font-weight:700;font-size:0.9rem;color:var(--dark);margin-bottom:2px;">@item.Name</div>
+                <div style="font-size:0.78rem;color:var(--dark-light);margin-bottom:8px;">@item.Rest</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-weight:700;color:var(--orange);">@item.Price</span>
+                    <a href="/Home/Orders" class="ets-btn ets-btn--primary" style="padding:5px 12px;font-size:0.78rem;">Reorder</a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    // Favourite toggle
+    function toggleFav(event, el) {
+        event.stopPropagation();
+        const icon = el.querySelector('i');
+        if (icon.classList.contains('far')) {
+            icon.classList.replace('far', 'fas');
+            el.style.color = 'var(--red)';
+        } else {
+            icon.classList.replace('fas', 'far');
+            el.style.color = '';
+        }
+    }
+
+    // Category filter (visual only — extend with AJAX for real filtering)
+    function filterCategory(el, cat) {
+        document.querySelectorAll('.ets-cat-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // Animate cards on scroll
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.ets-restaurant-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.25s ease';
+        observer.observe(card);
+    });
+</script>
+}

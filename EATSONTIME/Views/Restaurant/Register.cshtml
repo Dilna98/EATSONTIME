@@ -1,0 +1,222 @@
+@using EATSONTIME.Models
+@model Restaurant
+@{
+    ViewData["Title"] = "Partner with Us — EATSONTIME";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+<style>
+  body { background: #f0f0f5; }
+  .ets-register-page { min-height: calc(100vh - 68px); }
+</style>
+}
+
+<div class="ets-register-page">
+
+    <!-- ====== LEFT PANEL ====== -->
+    <div class="ets-register-left">
+        <div class="ets-register-left__icon">🍽️</div>
+        <h2>Partner with<br>EATSONTIME</h2>
+        <p>Join thousands of restaurants already earning more with us. It's fast, simple, and free to get started.</p>
+
+        <ul class="ets-register-left__perks">
+            <li>
+                <i class="fas fa-rocket"></i>
+                Get discovered by millions of hungry customers
+            </li>
+            <li>
+                <i class="fas fa-chart-line"></i>
+                Boost your revenue with zero upfront cost
+            </li>
+            <li>
+                <i class="fas fa-headset"></i>
+                Dedicated 24/7 partner support
+            </li>
+            <li>
+                <i class="fas fa-motorcycle"></i>
+                Our delivery fleet handles every order
+            </li>
+            <li>
+                <i class="fas fa-star"></i>
+                Real-time analytics &amp; order management
+            </li>
+        </ul>
+    </div>
+
+    <!-- ====== RIGHT PANEL (FORM) ====== -->
+    <div class="ets-register-right">
+        <div class="ets-register-form">
+            <h2 class="ets-register-form__title">Register Your Restaurant</h2>
+            <p class="ets-register-form__sub">Fill in the details below and we'll get you set up within 24 hours.</p>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+            }
+
+            <form asp-action="Register" asp-controller="Restaurant" method="post" id="restaurant-register-form" novalidate>
+                @Html.AntiForgeryToken()
+
+                <!-- Restaurant Name -->
+                <div class="ets-form-group">
+                    <label for="Name">Restaurant Name <span>*</span></label>
+                    <div class="ets-input-icon-wrap">
+                        <i class="fas fa-store"></i>
+                        <input asp-for="Name"
+                               class="ets-input"
+                               id="Name"
+                               placeholder="e.g. Biryani Palace"
+                               autocomplete="organization">
+                    </div>
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+
+                <!-- Address -->
+                <div class="ets-form-group">
+                    <label for="Address">Full Address <span>*</span></label>
+                    <div class="ets-input-icon-wrap">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input asp-for="Address"
+                               class="ets-input"
+                               id="Address"
+                               placeholder="Street, Area, City, Pincode"
+                               autocomplete="street-address">
+                    </div>
+                    <span asp-validation-for="Address" class="field-validation-error"></span>
+                </div>
+
+                <!-- Phone + Email -->
+                <div class="ets-form-row">
+                    <div class="ets-form-group">
+                        <label for="Phone">Phone Number <span>*</span></label>
+                        <div class="ets-input-icon-wrap">
+                            <i class="fas fa-phone"></i>
+                            <input asp-for="Phone"
+                                   class="ets-input"
+                                   id="Phone"
+                                   placeholder="10-digit mobile"
+                                   type="tel"
+                                   autocomplete="tel">
+                        </div>
+                        <span asp-validation-for="Phone" class="field-validation-error"></span>
+                    </div>
+                    <div class="ets-form-group">
+                        <label for="Email">Email Address <span>*</span></label>
+                        <div class="ets-input-icon-wrap">
+                            <i class="fas fa-envelope"></i>
+                            <input asp-for="Email"
+                                   class="ets-input"
+                                   id="Email"
+                                   placeholder="owner@restaurant.com"
+                                   type="email"
+                                   autocomplete="email">
+                        </div>
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <!-- Cuisine Type -->
+                <div class="ets-form-group">
+                    <label>Cuisine Type (select all that apply)</label>
+                    <div class="ets-cuisine-grid" id="cuisine-grid">
+                        @{
+                            var cuisineOptions = new[]
+                            {
+                                "🍛 Biryani", "🍕 Pizza",    "🍔 Burgers",
+                                "🍜 Chinese", "🥗 Salads",   "🍩 Desserts",
+                                "🥘 Curry",   "🥪 Sandwiches","🍣 Sushi",
+                                "🥞 Breakfast","🐟 Seafood",  "🌮 Mexican"
+                            };
+                        }
+                        @foreach (var cuisine in cuisineOptions)
+                        {
+                            var cid = "cuisine-" + cuisine.Replace(" ", "").Replace("🍛","").Replace("🍕","").Replace("🍔","").Replace("🍜","").Replace("🥗","").Replace("🍩","").Replace("🥘","").Replace("🥪","").Replace("🍣","").Replace("🥞","").Replace("🐟","").Replace("🌮","");
+                            <label class="ets-cuisine-chip" for="@cid" onclick="toggleChip(this)">
+                                <input id="@cid" type="checkbox" name="CuisineTypes" value="@cuisine">
+                                @cuisine
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Opening Hours -->
+                <div class="ets-form-row">
+                    <div class="ets-form-group">
+                        <label for="opens-at">Opens At</label>
+                        <div class="ets-input-icon-wrap">
+                            <i class="fas fa-clock"></i>
+                            <input type="time" class="ets-input" id="opens-at" value="09:00" name="OpensAt">
+                        </div>
+                    </div>
+                    <div class="ets-form-group">
+                        <label for="closes-at">Closes At</label>
+                        <div class="ets-input-icon-wrap">
+                            <i class="fas fa-clock"></i>
+                            <input type="time" class="ets-input" id="closes-at" value="22:00" name="ClosesAt">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="ets-form-group" style="display:flex;align-items:flex-start;gap:10px;">
+                    <input type="checkbox" id="terms-check" required
+                           style="margin-top:3px;accent-color:var(--orange);width:16px;height:16px;cursor:pointer;">
+                    <label for="terms-check" style="font-size:0.85rem;color:var(--dark-light);cursor:pointer;font-weight:400;">
+                        I agree to the <a href="#" style="color:var(--orange);font-weight:600;">Terms of Service</a>
+                        and <a href="#" style="color:var(--orange);font-weight:600;">Partner Agreement</a>
+                    </label>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="ets-form-submit" id="register-submit-btn">
+                    <i class="fas fa-rocket"></i>
+                    Register My Restaurant
+                </button>
+
+                <p style="text-align:center;font-size:0.8rem;color:var(--dark-light);margin-top:14px;">
+                    Already a partner? <a href="#" style="color:var(--orange);font-weight:600;">Login to Dashboard</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    // Toggle cuisine chip selection
+    function toggleChip(label) {
+        const cb = label.querySelector('input[type="checkbox"]');
+        // Let the browser handle the checked state first
+        setTimeout(() => {
+            label.classList.toggle('checked', cb.checked);
+        }, 0);
+    }
+
+    // Form submit animation
+    const form = document.getElementById('restaurant-register-form');
+    const submitBtn = document.getElementById('register-submit-btn');
+
+    form.addEventListener('submit', function (e) {
+        const termsCheck = document.getElementById('terms-check');
+        if (!termsCheck.checked) {
+            e.preventDefault();
+            showToast('⚠️ Please agree to the Terms of Service');
+            return;
+        }
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+    });
+
+    // Highlight input on focus with smooth effect
+    document.querySelectorAll('.ets-input').forEach(input => {
+        input.addEventListener('focus', () => {
+            input.closest('.ets-form-group').querySelector('label').style.color = 'var(--orange)';
+        });
+        input.addEventListener('blur', () => {
+            input.closest('.ets-form-group').querySelector('label').style.color = '';
+        });
+    });
+</script>
+}
