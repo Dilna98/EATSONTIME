@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace EATSONTIME.Models
 {
@@ -15,6 +17,10 @@ namespace EATSONTIME.Models
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
+
+        [NotMapped]
+        public List<string>? CuisineTypes { get; set; }
+
 
 
     }
