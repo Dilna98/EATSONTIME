@@ -66,5 +66,49 @@ namespace EATSONTIME.Controllers
             return RedirectToAction("Register");
         }
 
+        // GET: /Restaurant/Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: /Restaurant/Login
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(string email, string phone)
+        {
+            var restaurant = _db.Restaurant_Tb.FirstOrDefault(u => u.Email == email && u.Phone == phone);
+            if (restaurant != null)
+            {
+                HttpContext.Session.SetInt32("RestaurantId", restaurant.RestaurentId);
+                HttpContext.Session.SetString("RestaurantName", restaurant.Name);
+                return RedirectToAction("Dashboard");
+            }
+
+            ViewBag.Error = "Invalid Email or Phone Number";
+            return View();
+        }
+
+        // GET: /Restaurant/Dashboard
+        [HttpGet]
+        public IActionResult Dashboard()
+        {
+            var restaurantId = HttpContext.Session.GetInt32("RestaurantId");
+            if (restaurantId == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var foodItems = _db.FoodItems_Tb.Where(f => f.RestaurentId == restaurantId).ToList();
+            return View(foodItems);
+        }
+
+        // GET: /Restaurant/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
     }
 }

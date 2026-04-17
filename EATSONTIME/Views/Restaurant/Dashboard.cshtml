@@ -1,0 +1,256 @@
+@model List<EATSONTIME.Models.FoodItems>
+@{
+    ViewData["Title"] = "Restaurant Dashboard";
+    Layout = "_Layout";
+    var restaurantName = Context.Session.GetString("RestaurantName") ?? "Restaurant";
+}
+
+<div class="dashboard-container">
+    <header class="dashboard-header animate__animated animate__fadeInDown">
+        <div class="header-left">
+            <h1 class="premium-text">Welcome, @restaurantName</h1>
+            <p class="subtitle">Here are your signature cuisines and food items.</p>
+        </div>
+        <div class="header-right">
+            <a asp-action="Logout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </header>
+
+    <div class="stats-grid mb-5">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-utensils"></i></div>
+            <div class="stat-info">
+                <h3>@Model.Count</h3>
+                <p>Total Items</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container animate__animated animate__fadeInUp">
+        <div class="table-card">
+            <div class="table-card-header">
+                <h2>Cuisine & Food Directory</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table premium-table">
+                    <thead>
+                        <tr>
+                            <th>FoodId</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>CategoryId</th>
+                            <th>RestaurentId</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="id-col">#@item.FoodId</td>
+                                <td class="name-col">@item.Name</td>
+                                <td class="desc-col">@item.Description</td>
+                                <td class="price-col">₹@item.Price.ToString("N2")</td>
+                                <td class="cat-col"><span class="badge badge-premium">@item.CategoryId</span></td>
+                                <td class="res-col"><span class="badge badge-outline">@item.RestaurentId</span></td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-clipboard-list"></i>
+                                        <p>No food items found. Start by adding some cuisines!</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        --dark-bg: #1a1a1a;
+        --card-bg: #ffffff;
+        --text-muted: #636e72;
+    }
+
+    .dashboard-container {
+        padding: 2rem;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 3rem;
+    }
+
+    .premium-text {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+    }
+
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .btn-logout {
+        padding: 0.8rem 1.5rem;
+        background: #f1f2f6;
+        color: #2d3436;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+        background: #dfe6e9;
+        transform: translateY(-2px);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        background: #fff0f0;
+        color: #ff4b2b;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-info h3 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .stat-info p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .table-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        border: 1px solid #f1f2f6;
+    }
+
+    .table-card-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #f1f2f6;
+    }
+
+    .table-card-header h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .premium-table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .premium-table thead th {
+        background: #f8f9fa;
+        color: #b2bec3;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 1.2rem 1.5rem;
+        border: none;
+    }
+
+    .premium-table tbody td {
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        border-top: 1px solid #f1f2f6;
+        color: #2d3436;
+        font-weight: 500;
+    }
+
+    .id-col {
+        color: #b2bec3;
+        font-family: monospace;
+    }
+
+    .name-col {
+        font-weight: 700 !important;
+        color: #000 !important;
+    }
+
+    .price-col {
+        color: #ff4b2b !important;
+        font-weight: 800 !important;
+    }
+
+    .badge-premium {
+        background: #fff0f0;
+        color: #ff4b2b;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+    }
+
+    .badge-outline {
+        background: transparent;
+        border: 1px solid #e1e8ed;
+        color: #636e72;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+    }
+
+    .empty-state {
+        color: var(--text-muted);
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+</style>

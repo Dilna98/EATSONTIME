@@ -1,0 +1,202 @@
+@model EATSONTIME.Models.Restaurant
+@{
+    ViewData["Title"] = "Restaurant Login";
+    Layout = "_Layout";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h1 class="premium-text neon-pulse">Restaurant Login</h1>
+            <p class="subtitle">Access your dashboard to manage your signature cuisines</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger animate__animated animate__shakeX">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="Login" method="post" class="login-form">
+            @Html.AntiForgeryToken()
+            <div class="form-group floating-label">
+                <input type="email" name="email" id="email" class="form-control" placeholder=" " required />
+                <label for="email"><i class="fas fa-envelope"></i> Email Address (Username)</label>
+            </div>
+
+            <div class="form-group floating-label">
+                <input type="password" name="phone" id="phone" class="form-control" placeholder=" " required />
+                <label for="phone"><i class="fas fa-phone"></i> Phone Number (Password)</label>
+            </div>
+
+            <div class="action-bar">
+                <button type="submit" class="btn-premium">
+                    <span>Login to Dashboard</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            <p>Don't have an account? <a asp-action="Register" class="link-glow">Register your Restaurant</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.95);
+        --text-color: #2d3436;
+    }
+
+    body {
+        background: #f8f9fa;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .login-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .login-card {
+        background: var(--glass-bg);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 450px;
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .premium-text {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #636e72;
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .floating-label input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: transparent;
+    }
+
+    .floating-label i {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b2bec3;
+        transition: color 0.3s ease;
+    }
+
+    .floating-label label {
+        position: absolute;
+        left: 3rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b2bec3;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .floating-label input:focus,
+    .floating-label input:not(:placeholder-shown) {
+        border-color: #ff4b2b;
+        outline: none;
+        padding-top: 1.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .floating-label input:focus + label,
+    .floating-label input:not(:placeholder-shown) + label {
+        top: 15%;
+        left: 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #ff4b2b;
+    }
+
+    .floating-label input:focus ~ i {
+        color: #ff4b2b;
+    }
+
+    .btn-premium {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(255, 75, 43, 0.3);
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(255, 75, 43, 0.4);
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+    }
+
+    .link-glow {
+        color: #ff4b2b;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .link-glow:hover {
+        text-shadow: 0 0 8px rgba(255, 75, 43, 0.4);
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+</style>
