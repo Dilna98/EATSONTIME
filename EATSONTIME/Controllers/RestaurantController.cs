@@ -31,38 +31,7 @@ namespace EATSONTIME.Controllers
             _db.Restaurant_Tb.Add(model);
             await _db.SaveChangesAsync(); // New Restaurant ID is generated here
 
-            // Save Cuisine Types to FoodItems_Tb as detail
-            if (model.CuisineTypes != null && model.CuisineTypes.Any())
-            {
-                // 1. Create a default category for the restaurant's initial cuisines
-                var defaultCategory = new Categories
-                {
-                    CategoryName = "Signature Cuisines",
-                    RestaurentId = model.RestaurentId
-                };
-                _db.Categories_Tb.Add(defaultCategory);
-                await _db.SaveChangesAsync();
-
-                // 2. Add each cuisine as a food item
-                foreach (var cuisine in model.CuisineTypes)
-                {
-                    // Remove emojis and leading/trailing whitespace
-                    string cleanName = System.Text.RegularExpressions.Regex.Replace(cuisine, @"[^\u0000-\u007F]+", string.Empty).Trim();
-
-                    var foodItem = new FoodItems
-                    {
-                        Name = cleanName,
-                        Description = $"Delicious {cleanName} prepared by {model.Name}",
-                        Price = 0, // Default price
-                        CategoryId = defaultCategory.CategoryId,
-                        RestaurentId = model.RestaurentId
-                    };
-                    _db.FoodItems_Tb.Add(foodItem);
-                }
-                await _db.SaveChangesAsync();
-            }
-
-            TempData["Success"] = $"🎉 Welcome aboard! \"{model.Name}\" has been registered successfully. Your signature cuisines have been added!";
+            TempData["Success"] = $"🎉 Welcome aboard! \"{model.Name}\" has been registered successfully. You can now login to add your food items.";
             return RedirectToAction("Register");
         }
 
@@ -100,8 +69,64 @@ namespace EATSONTIME.Controllers
                 return RedirectToAction("Login");
             }
 
+            // Fetch categories for the dropdown
+            var categories = _db.Categories_Tb.Where(c => c.RestaurentId == restaurantId).ToList();
+
+            // If no categories exist, create a default "Food" category
+            if (!categories.Any())
+            {
+                var defaultCategory = new Categories
+                {
+                    CategoryName = "Food",
+                    RestaurentId = (int)restaurantId
+                };
+                _db.Categories_Tb.Add(defaultCategory);
+                _db.SaveChanges();
+                categories.Add(defaultCategory);
+            }
+
+            ViewBag.Categories = categories;
+
+            // Fetch food items
             var foodItems = _db.FoodItems_Tb.Where(f => f.RestaurentId == restaurantId).ToList();
             return View(foodItems);
+        }
+
+        // POST: /Restaurant/AddFoodItem
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddFoodItem(List<string> itemNames, decimal Price, int CategoryId)
+        {
+            var restaurantId = HttpContext.Session.GetInt32("RestaurantId");
+            if (restaurantId == null) return RedirectToAction("Login");
+
+            if (itemNames != null && itemNames.Any())
+            {
+                var restaurantName = HttpContext.Session.GetString("RestaurantName") ?? "Restaurant";
+                foreach (var name in itemNames)
+                {
+                    // Clean the name (remove emojis like in registration)
+                    string cleanName = System.Text.RegularExpressions.Regex.Replace(name, @"[^\u0000-\u007F]+", string.Empty).Trim();
+
+                    var item = new FoodItems
+                    {
+                        Name = cleanName,
+                        Description = $"Delicious {cleanName} prepared by {restaurantName}",
+                        Price = Price,
+                        CategoryId = CategoryId,
+                        RestaurentId = (int)restaurantId
+                    };
+                    _db.FoodItems_Tb.Add(item);
+                }
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"{itemNames.Count} food items added successfully!";
+            }
+            else
+            {
+                TempData["Error"] = "Please select at least one cuisine.";
+            }
+
+            return RedirectToAction("Dashboard");
         }
 
         // GET: /Restaurant/Logout

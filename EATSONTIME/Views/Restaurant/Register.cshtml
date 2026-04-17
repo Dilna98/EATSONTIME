@@ -116,29 +116,6 @@
                     </div>
                 </div>
 
-                <!-- Cuisine Type -->
-                <div class="ets-form-group">
-                    <label>Cuisine Type (select all that apply)</label>
-                    <div class="ets-cuisine-grid" id="cuisine-grid">
-                        @{
-                            var cuisineOptions = new[]
-                            {
-                                "🍛 Biryani", "🍕 Pizza",    "🍔 Burgers",
-                                "🍜 Chinese", "🥗 Salads",   "🍩 Desserts",
-                                "🥘 Curry",   "🥪 Sandwiches","🍣 Sushi",
-                                "🥞 Breakfast","🐟 Seafood",  "🌮 Mexican"
-                            };
-                        }
-                        @foreach (var cuisine in cuisineOptions)
-                        {
-                            var cid = "cuisine-" + cuisine.Replace(" ", "").Replace("🍛","").Replace("🍕","").Replace("🍔","").Replace("🍜","").Replace("🥗","").Replace("🍩","").Replace("🥘","").Replace("🥪","").Replace("🍣","").Replace("🥞","").Replace("🐟","").Replace("🌮","");
-                            <label class="ets-cuisine-chip" for="@cid" onclick="toggleChip(this)">
-                                <input id="@cid" type="checkbox" name="CuisineTypes" value="@cuisine">
-                                @cuisine
-                            </label>
-                        }
-                    </div>
-                </div>
 
                 <!-- Opening Hours -->
                 <div class="ets-form-row">
