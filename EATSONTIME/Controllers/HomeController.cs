@@ -15,14 +15,40 @@ namespace EATSONTIME.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index(string? search, string? category)
+        public async Task<IActionResult> Index(string? search, string? category, string? dish)
         {
+            // Curated list of dishes for the "What's on your mind?" carousel (matching our premium images)
+            var curatedDishes = new List<string> { "Biryani", "Pizza", "Dosa", "Noodles", "Shawarma", "Cake", "Juice" };
+            
+            // Fetch distinct food items from DB to see if any others should be added
+            var dbFoodItems = await _db.FoodItems_Tb
+                .Select(f => f.Name)
+                .Distinct()
+                .ToListAsync();
+
+            // Combine curated with DB items, keeping curated first
+            var carouselDishes = curatedDishes.Union(dbFoodItems).ToList();
+
             // Fetch restaurants from DB
             var restaurantsQuery = _db.Restaurant_Tb.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
+            {
                 restaurantsQuery = restaurantsQuery.Where(r =>
                     r.Name.Contains(search) || r.Address.Contains(search));
+            }
+            
+            if (!string.IsNullOrWhiteSpace(dish))
+            {
+                // Find restaurants that serve this specific dish in their FoodItems_Tb
+                var restaurantIdsWithDish = await _db.FoodItems_Tb
+                    .Where(f => f.Name == dish || f.Name.Contains(dish))
+                    .Select(f => f.RestaurentId)
+                    .Distinct()
+                    .ToListAsync();
+                
+                restaurantsQuery = restaurantsQuery.Where(r => restaurantIdsWithDish.Contains(r.RestaurentId));
+            }
 
             var restaurants = await restaurantsQuery.ToListAsync();
 
@@ -32,26 +58,18 @@ namespace EATSONTIME.Controllers
                 .Distinct()
                 .ToListAsync();
 
-            // If no restaurants in DB yet, add sample data for visual demo
-            if (!restaurants.Any())
+            // If no restaurants in DB yet, add sample data for visual demo (except when filtering)
+            if (!restaurants.Any() && string.IsNullOrEmpty(dish) && string.IsNullOrEmpty(search))
             {
                 restaurants = GetSampleRestaurants();
             }
 
-            if (!categories.Any())
-            {
-                categories = new List<string>
-                {
-                    "🍔 Burgers", "🍕 Pizza", "🍜 Biryani",
-                    "🌮 Chinese", "🥗 Salads", "🍩 Desserts",
-                    "🥪 Sandwiches", "🍣 Sushi", "🥞 Breakfast"
-                };
-            }
-
             ViewBag.Restaurants = restaurants;
             ViewBag.Categories = categories;
+            ViewBag.FoodItems = carouselDishes;
             ViewBag.Search = search;
             ViewBag.SelectedCategory = category;
+            ViewBag.SelectedDish = dish;
 
             return View();
         }

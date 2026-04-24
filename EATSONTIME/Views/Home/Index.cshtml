@@ -1,4 +1,81 @@
 @using EATSONTIME.Models
+@section Styles {
+<style>
+  body { background: #f0f0f5; }
+  .ets-register-page { min-height: calc(100vh - 68px); }
+  
+  /* Best Foods Carousel */
+  .ets-food-carousel {
+      display: flex;
+      gap: 32px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 20px 0;
+      scroll-behavior: smooth;
+      flex-wrap: nowrap;
+      -ms-overflow-style: none;
+  }
+  .ets-food-carousel::-webkit-scrollbar { display: none; }
+  
+  .ets-food-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 150px;
+      transition: transform 0.3s ease;
+      text-align: center;
+      flex-shrink: 0;
+      text-decoration: none;
+  }
+  .ets-food-card:hover { transform: scale(1.05); }
+  .ets-food-card__img-container {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+  }
+  .ets-food-card__img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 10px;
+  }
+  .ets-food-card__name {
+      font-weight: 700;
+      color: #3d4152;
+      font-size: 1.1rem;
+  }
+  .ets-food-card.active .ets-food-card__img-container {
+      border-color: var(--orange);
+      box-shadow: 0 0 20px rgba(252, 128, 25, 0.2);
+  }
+  .ets-food-card.active .ets-food-card__name {
+      color: var(--orange);
+      font-weight: 800;
+  }
+  
+  .ets-carousel-controls { display: flex; gap: 10px; }
+  .carousel-control-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #e2e2e7;
+      color: #3d4152;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+  }
+  .carousel-control-btn:hover { background: #d4d4d9; }
+</style>
+}
 @{
     ViewData["Title"] = "Order Food Online — EATSONTIME";
     var restaurants = ViewBag.Restaurants as List<Restaurant> ?? new List<Restaurant>();
@@ -54,37 +131,84 @@
     </div>
 </section>
 
+<!-- ====== BEST FOOD OPTIONS (NEW) ====== -->
+<section class="ets-section ets-best-foods">
+    <div class="ets-section__header">
+        <h2 class="ets-section__title">What's on your mind?</h2>
+        <div class="ets-carousel-controls">
+            <button class="carousel-control-btn prev" onclick="scrollCarousel(-1)"><i class="fas fa-arrow-left"></i></button>
+            <button class="carousel-control-btn next" onclick="scrollCarousel(1)"><i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+    
+    <div class="ets-food-carousel" id="food-carousel">
+        @{
+            var carouselDishes = ViewBag.FoodItems as List<string> ?? new List<string>();
+            var foodImages = new Dictionary<string, string>
+            {
+                { "Biryani", "/images/foods/best_biryani_card_1776446410031.png" },
+                { "Pizza", "/images/foods/best_pizza_card_1776446533693.png" },
+                { "Dosa", "/images/foods/best_dosa_card_1776446575917.png" },
+                { "Noodles", "/images/foods/best_noodles_card_1776446607595.png" },
+                { "Cake", "/images/foods/best_cake_card_1776446642302.png" },
+                { "Juice", "/images/foods/best_juice_card_1776446774452.png" },
+                { "Shawarma", "/images/foods/best_shawarma_card_1776446803571.png" }
+            };
+        }
+        
+        @foreach (var dish in carouselDishes)
+        {
+            var cleanDishName = System.Text.RegularExpressions.Regex.Replace(dish, @"[^\u0000-\u007F]+", string.Empty).Trim();
+            var imgPath = foodImages.ContainsKey(cleanDishName) ? foodImages[cleanDishName] : "/images/foods/best_biryani_card_1776446410031.png";
+            <a href="?dish=@cleanDishName" class="ets-food-card ets-animate animate-fade @(ViewBag.SelectedDish == cleanDishName ? "active" : "")">
+                <div class="ets-food-card__img-container">
+                    <img src="@Url.Content("~" + imgPath)" alt="@dish" />
+                </div>
+                <span class="ets-food-card__name">@dish</span>
+            </a>
+        }
+    </div>
+</section>
+
 <!-- ====== CATEGORY PILLS ====== -->
 <div class="ets-categories">
     <div class="ets-categories__strip" id="category-strip">
-        <span class="ets-cat-pill active" id="cat-all" onclick="filterCategory(this, '')">
+        <a href="/" class="ets-cat-pill @(string.IsNullOrEmpty(ViewBag.SelectedCategory) && string.IsNullOrEmpty(ViewBag.SelectedDish) ? "active" : "")">
             🍽️ All
-        </span>
+        </a>
         @foreach (var cat in categories)
         {
-            <span class="ets-cat-pill" onclick="filterCategory(this, '@cat')" id="cat-@cat.Replace(" ","").Replace("🍔","").Replace("🍕","").Replace("🍜","").Replace("🌮","").Replace("🥗","").Replace("🍩","").Replace("🥪","").Replace("🍣","").Replace("🥞","")">
+            <a href="?category=@cat" class="ets-cat-pill @(ViewBag.SelectedCategory == cat ? "active" : "")">
                 @cat
-            </span>
+            </a>
         }
     </div>
 </div>
 
 <!-- ====== OFFER BANNER ====== -->
-<div class="ets-offer-banner ets-animate ets-animate-delay-2">
-    <div>
-        <h3>🎉 Limited Time Offer</h3>
-        <p>Get 50% off on your first 3 orders. Use code <strong>WELCOME50</strong></p>
+@if (string.IsNullOrEmpty(ViewBag.SelectedDish)) {
+    <div class="ets-offer-banner ets-animate ets-animate-delay-2">
+        <div>
+            <h3>🎉 Limited Time Offer</h3>
+            <p>Get 50% off on your first 3 orders. Use code <strong>WELCOME50</strong></p>
+        </div>
+        <a href="#restaurants-section" class="ets-offer-banner__cta">Order Now →</a>
     </div>
-    <a href="#restaurants-section" class="ets-offer-banner__cta">Order Now →</a>
-</div>
+}
 
 <!-- ====== RESTAURANTS SECTION ====== -->
 <section class="ets-section" id="restaurants-section">
     <div class="ets-section__header">
         <h2 class="ets-section__title" id="restaurants-heading">
-            @if (!string.IsNullOrEmpty(search))
+            @if (!string.IsNullOrEmpty(ViewBag.SelectedDish))
+            {
+                <span>Restaurants serving "<em>@ViewBag.SelectedDish</em>"</span>
+                <a href="/" class="ms-3 btn btn-sm btn-outline-danger" style="border-radius:20px; font-size:0.75rem;">Clear Filter <i class="fas fa-times"></i></a>
+            }
+            else if (!string.IsNullOrEmpty(search))
             {
                 <span>Results for "<em>@search</em>"</span>
+                <a href="/" class="ms-3 btn btn-sm btn-outline-danger" style="border-radius:20px; font-size:0.75rem;">Clear Search <i class="fas fa-times"></i></a>
             }
             else
             {
@@ -186,6 +310,12 @@
 
 @section Scripts {
 <script>
+    function scrollCarousel(dir) {
+        const c = document.getElementById('food-carousel');
+        const scrollAmount = 300;
+        if (c) c.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+    }
+
     // Favourite toggle
     function toggleFav(event, el) {
         event.stopPropagation();
