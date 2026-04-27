@@ -10,10 +10,12 @@ namespace EATSONTIME.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDBContext _db;
+        private readonly IWebHostEnvironment _env;
 
-        public HomeController(ApplicationDBContext db)
+        public HomeController(ApplicationDBContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
 
         public async Task<IActionResult> Index(string? search, string? category, string? dish)
@@ -30,7 +32,7 @@ namespace EATSONTIME.Controllers
             // Combine curated with DB items, keeping curated first
             var carouselDishes = curatedDishes.Union(dbFoodItems).ToList();
 
-            // Fetch restaurants from DB
+            // Fetch restaurants from DB - Group by name to show only distinct restaurants
             var restaurantsQuery = _db.Restaurant_Tb.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -51,7 +53,31 @@ namespace EATSONTIME.Controllers
                 restaurantsQuery = restaurantsQuery.Where(r => restaurantIdsWithDish.Contains(r.RestaurentId));
             }
 
-            var restaurants = await restaurantsQuery.ToListAsync();
+            // Group by Name to ensure distinct restaurants in the listing
+            var restaurants = await restaurantsQuery
+                .GroupBy(r => r.Name)
+                .Select(g => g.FirstOrDefault())
+                .ToListAsync();
+
+            // Check for physical images in wwwroot/images/restaurants/
+            var restaurantImages = new Dictionary<string, string>();
+            var imagesPath = Path.Combine(_env.WebRootPath, "images", "restaurants");
+            
+            if (Directory.Exists(imagesPath))
+            {
+                foreach (var r in restaurants)
+                {
+                    // Look for name.jpg or name.png
+                    var jpgPath = Path.Combine(imagesPath, r.Name + ".jpg");
+                    var pngPath = Path.Combine(imagesPath, r.Name + ".png");
+
+                    if (System.IO.File.Exists(jpgPath))
+                        restaurantImages[r.Name] = "/images/restaurants/" + r.Name + ".jpg";
+                    else if (System.IO.File.Exists(pngPath))
+                        restaurantImages[r.Name] = "/images/restaurants/" + r.Name + ".png";
+                }
+            }
+            ViewBag.RestaurantImages = restaurantImages;
 
             // Fetch categories for the pill strip
             var categories = await _db.Categories_Tb

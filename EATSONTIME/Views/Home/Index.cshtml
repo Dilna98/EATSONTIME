@@ -75,6 +75,126 @@
       transition: all 0.2s ease;
   }
   .carousel-control-btn:hover { background: #d4d4d9; }
+  /* Dineout Style Restaurant Cards */
+  .ets-restaurants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      padding: 20px 0;
+  }
+  
+  .ets-dineout-card {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid #f0f0f5;
+  }
+  .ets-dineout-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+  }
+  
+  .ets-dineout-card__img-wrap {
+      position: relative;
+      height: 200px;
+      width: 100%;
+  }
+  .ets-dineout-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+  
+  .ets-dineout-card__overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 16px 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+  }
+  
+  .ets-dineout-card__name {
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .ets-dineout-card__rating {
+      background: #24963f;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+  }
+  
+  .ets-dineout-card__body {
+      padding: 16px;
+  }
+  
+  .ets-dineout-card__line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+  }
+  
+  .ets-dineout-card__cuisine { color: #686b78; }
+  .ets-dineout-card__price { font-weight: 600; color: #3d4152; }
+  .ets-dineout-card__location { color: #686b78; }
+  .ets-dineout-card__distance { color: #686b78; font-weight: 500; }
+  
+  .ets-dineout-card__offer {
+      background: #1ba672;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+  }
+  
+  .ets-dineout-card__bank-offer {
+      background: #d1f3e0;
+      color: #1ba672;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 8px;
+  }
+  
+  .ets-dineout-card__fav {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #686b78;
+      transition: all 0.2s;
+  }
+  .ets-dineout-card__fav:hover { transform: scale(1.1); color: var(--red); }
 </style>
 }
 @{
@@ -213,12 +333,13 @@
             }
             else
             {
-                <span>🔥 Popular Restaurants Near You</span>
+                <span>Discover best restaurants on Dineout</span>
             }
         </h2>
-        <a href="/" class="ets-section__link" id="see-all-link">
-            See all <i class="fas fa-arrow-right"></i>
-        </a>
+        <div class="ets-carousel-controls">
+            <button class="carousel-control-btn prev"><i class="fas fa-arrow-left"></i></button>
+            <button class="carousel-control-btn next"><i class="fas fa-arrow-right"></i></button>
+        </div>
     </div>
 
     @if (!restaurants.Any())
@@ -232,6 +353,8 @@
     }
     else
     {
+        var restaurantImages = ViewBag.RestaurantImages as Dictionary<string, string> ?? new Dictionary<string, string>();
+        
         <div class="ets-restaurants-grid" id="restaurants-grid">
             @for (int i = 0; i < restaurants.Count; i++)
             {
@@ -243,32 +366,55 @@
                 var discount  = discounts[idx];
                 var emoji     = emojis[idx];
                 var bg        = bgColors[idx];
+                
+                var hasImg = restaurantImages.ContainsKey(r.Name);
+                var imgPath = hasImg ? restaurantImages[r.Name] : "";
 
-                <div class="ets-restaurant-card ets-animate ets-animate-delay-@((i % 3) + 1)"
+                <div class="ets-dineout-card ets-animate ets-animate-delay-@((i % 3) + 1)"
                      id="restaurant-card-@r.RestaurentId"
                      onclick="window.location='#'">
-                    <div class="ets-restaurant-card__img-wrap"
-                         style="background: linear-gradient(135deg, @bg, #fff);">
-                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;">
-                            @emoji
+                    
+                    <div class="ets-dineout-card__img-wrap">
+                        @if (hasImg)
+                        {
+                            <img src="@Url.Content("~" + imgPath)" alt="@r.Name" />
+                        }
+                        else
+                        {
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;background:#f8f9fa;">
+                                @emoji
+                            </div>
+                        }
+                        
+                        <div class="ets-dineout-card__overlay">
+                            <h3 class="ets-dineout-card__name">@r.Name</h3>
+                            <div class="ets-dineout-card__rating">
+                                <i class="fas fa-star"></i> @rating
+                            </div>
                         </div>
-                        <span class="ets-restaurant-card__badge">@discount</span>
-                        <span class="ets-restaurant-card__fav" title="Add to favourites"
-                              onclick="toggleFav(event, this)">
+
+                        <span class="ets-dineout-card__fav" title="Add to favourites" onclick="toggleFav(event, this)">
                             <i class="far fa-heart"></i>
                         </span>
                     </div>
-                    <div class="ets-restaurant-card__body">
-                        <div class="ets-restaurant-card__name" title="@r.Name">@r.Name</div>
-                        <div class="ets-restaurant-card__cuisine">@cuisine</div>
-                        <div class="ets-restaurant-card__meta">
-                            <span class="ets-restaurant-card__rating">
-                                <i class="fas fa-star" style="font-size:10px;"></i> @rating
-                            </span>
-                            <span class="ets-restaurant-card__time">
-                                <i class="fas fa-clock"></i> @time mins
-                            </span>
-                            <span class="ets-restaurant-card__min">₹150 for two</span>
+
+                    <div class="ets-dineout-card__body">
+                        <div class="ets-dineout-card__line">
+                            <span class="ets-dineout-card__cuisine">@cuisine.Split('•')[0]</span>
+                            <span class="ets-dineout-card__price">₹500 for two</span>
+                        </div>
+                        <div class="ets-dineout-card__line">
+                            <span class="ets-dineout-card__location">@r.Address</span>
+                            <span class="ets-dineout-card__distance">@(new Random().Next(1, 15)).@(new Random().Next(1, 9)) km</span>
+                        </div>
+
+                        <div class="ets-dineout-card__offer">
+                            <span><i class="fas fa-percentage"></i> @discount</span>
+                            <span style="opacity:0.8;">+ @(new Random().Next(1, 5)) more</span>
+                        </div>
+
+                        <div class="ets-dineout-card__bank-offer">
+                            Up to 10% off with bank offers
                         </div>
                     </div>
                 </div>
