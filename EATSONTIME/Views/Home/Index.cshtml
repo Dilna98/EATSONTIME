@@ -194,7 +194,201 @@
       color: #686b78;
       transition: all 0.2s;
   }
-  .ets-dineout-card__fav:hover { transform: scale(1.1); color: var(--red); }
+  /* Premium Hero Section */
+  .ets-hero-premium {
+      min-height: 520px;
+      padding: 80px 5%;
+      background: radial-gradient(at 0% 0%, #fffbf2 0%, transparent 50%),
+                  radial-gradient(at 100% 0%, #fff3e8 0%, transparent 50%),
+                  radial-gradient(at 100% 100%, #ffe8d1 0%, transparent 50%),
+                  radial-gradient(at 0% 100%, #fffbf2 0%, transparent 50%),
+                  #fff;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+  }
+  
+  .ets-hero-premium__content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+  }
+  
+  .ets-hero-premium__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      padding: 6px 16px 6px 6px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #3d4152;
+  }
+  .ets-badge-new {
+      background: var(--orange);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+  }
+  
+  .ets-hero-premium__title {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      letter-spacing: -1.5px;
+  }
+  .text-gradient {
+      background: linear-gradient(135deg, #FC8019, #ff5c00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+  }
+  .text-highlight {
+      position: relative;
+      z-index: 1;
+  }
+  .text-highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 10%;
+      left: 0;
+      width: 100%;
+      height: 25%;
+      background: rgba(252, 128, 25, 0.15);
+      z-index: -1;
+      border-radius: 4px;
+  }
+  
+  .ets-hero-premium__subtitle {
+      font-size: 1.2rem;
+      color: #686b78;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      max-width: 500px;
+  }
+  
+  /* Modern Search Bar */
+  .ets-hero-premium__search-wrap {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 10px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.5);
+      max-width: 720px;
+  }
+  .ets-hero-premium__search-form {
+      display: flex;
+      align-items: center;
+      gap: 0;
+  }
+  .ets-input-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+  }
+  .ets-input-with-icon i { color: var(--orange); font-size: 1.1rem; }
+  .ets-input-with-icon input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      width: 100%;
+  }
+  .ets-search-divider {
+      width: 1px;
+      height: 30px;
+      background: #ddd;
+      margin: 0 10px;
+  }
+  .ets-hero-premium__btn {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(252, 128, 25, 0.3);
+  }
+  .ets-hero-premium__btn:hover {
+      background: #ff5c00;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(252, 128, 25, 0.4);
+  }
+  
+  .ets-hero-premium__stats {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-top: 50px;
+  }
+  .ets-stat-item {
+      display: flex;
+      flex-direction: column;
+  }
+  .stat-number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #1a1a1a;
+  }
+  .stat-label {
+      font-size: 0.85rem;
+      color: #686b78;
+      font-weight: 600;
+  }
+  .ets-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: #eee;
+  }
+  
+  /* Decoration Elements */
+  .ets-hero-premium__decorations {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+  }
+  .floating-item {
+      position: absolute;
+      font-size: 3rem;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+      animation: float-around 6s infinite ease-in-out;
+  }
+  .item-1 { top: 15%; right: 15%; animation-delay: 0s; font-size: 5rem; }
+  .item-2 { bottom: 20%; right: 10%; animation-delay: 1s; font-size: 4rem; }
+  .item-3 { top: 10%; left: 60%; animation-delay: 2s; font-size: 3.5rem; }
+  .item-4 { bottom: 15%; left: 55%; animation-delay: 1.5s; font-size: 3rem; }
+  .item-5 { top: 40%; right: 5%; animation-delay: 3s; font-size: 2.5rem; }
+  
+  @@keyframes float-around {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(15px, -20px) rotate(5deg); }
+      66% { transform: translate(-10px, 15px) rotate(-5deg); }
+  }
+  
+  .animate-float { animation: float-subtle 3s infinite ease-in-out; }
+  @@keyframes float-subtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+  }
 </style>
 }
 @{
@@ -217,38 +411,66 @@
                                "#f3e5f5", "#fff8e1", "#e0f7fa", "#fbe9e7" };
 }
 
-<!-- ====== HERO ====== -->
-<section class="ets-hero">
-    <div class="ets-hero__inner ets-animate">
-        <span class="ets-hero__tag">🚀 Fast Delivery</span>
-        <h1>Order food &amp; <span>groceries</span><br>delivered to you</h1>
-        <p>Discover the best restaurants &amp; cafés near you.<br>Fresh food delivered hot in 30 minutes or less.</p>
-        <form class="ets-hero__search" action="/" method="get" id="hero-search-form">
-            <input
-                type="text"
-                name="search"
-                value="@search"
-                placeholder="Search restaurants, cuisines, dishes..."
-                id="hero-search-input"
-                autocomplete="off">
-            <button type="submit" id="hero-search-btn">
-                <i class="fas fa-search"></i> Search
-            </button>
-        </form>
-        <div class="ets-hero__stats ets-animate ets-animate-delay-1">
-            <div class="ets-hero__stat">
-                <strong>500+</strong>
-                <span>Restaurants</span>
+<!-- ====== PREMIUM HERO SECTION ====== -->
+<section class="ets-hero-premium">
+    <div class="ets-hero-premium__content ets-animate">
+        <div class="ets-hero-premium__badge animate-float">
+            <span class="ets-badge-new">NEW</span>
+            <span>Now delivering in Calicut! 🚀</span>
+        </div>
+        
+        <h1 class="ets-hero-premium__title">
+            Your Favourite <span class="text-gradient">Food</span>,<br>
+            Delivered <span class="text-highlight">Fast</span>.
+        </h1>
+        
+        <p class="ets-hero-premium__subtitle">
+            Order from the best restaurants and cafés near you.<br>
+            Fresh, hot, and straight to your doorstep.
+        </p>
+
+        <div class="ets-hero-premium__search-wrap">
+            <form action="/" method="get" class="ets-hero-premium__search-form">
+                <div class="ets-input-with-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" placeholder="Enter your delivery location" id="loc-input">
+                </div>
+                <div class="ets-search-divider"></div>
+                <div class="ets-input-with-icon flex-grow-1">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" value="@search" placeholder="Search for restaurants, cuisines..." id="search-input">
+                </div>
+                <button type="submit" class="ets-hero-premium__btn">
+                    Find Food
+                </button>
+            </form>
+        </div>
+
+        <div class="ets-hero-premium__stats">
+            <div class="ets-stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Restaurants</span>
             </div>
-            <div class="ets-hero__stat">
-                <strong>30 min</strong>
-                <span>Avg Delivery</span>
+            <div class="ets-stat-divider"></div>
+            <div class="ets-stat-item">
+                <span class="stat-number">25 min</span>
+                <span class="stat-label">Delivery Time</span>
             </div>
-            <div class="ets-hero__stat">
-                <strong>10K+</strong>
-                <span>Happy Customers</span>
+            <div class="ets-stat-divider"></div>
+            <div class="ets-stat-item">
+                <span class="stat-number">10k+</span>
+                <span class="stat-label">Orders Daily</span>
             </div>
         </div>
+    </div>
+
+    <!-- Floating Food Elements (Visual decoration) -->
+    <div class="ets-hero-premium__decorations">
+        <div class="floating-item item-1">🍔</div>
+        <div class="floating-item item-2">🍕</div>
+        <div class="floating-item item-3">🍜</div>
+        <div class="floating-item item-4">🍩</div>
+        <div class="floating-item item-5">🥗</div>
     </div>
 </section>
 
@@ -423,37 +645,80 @@
     }
 </section>
 
-<!-- ====== QUICK REORDER SECTION ====== -->
-<section class="ets-section" style="background:#fff; padding-bottom:40px;">
-    <div class="ets-section__header">
-        <h2 class="ets-section__title">📦 My Recent Orders</h2>
-        <a href="/Home/Orders" class="ets-section__link" id="view-all-orders-link">
-            View all <i class="fas fa-arrow-right"></i>
-        </a>
-    </div>
-    <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;">
-        @{
-            var recentItems = new[]
-            {
-                new { Name = "Chicken Biryani",   Rest = "Biryani Palace",  Price = "₹220", Emoji = "🍛", Status = "Delivered" },
-                new { Name = "Margherita Pizza",  Rest = "Pizza Hub",       Price = "₹280", Emoji = "🍕", Status = "Delivered" },
-                new { Name = "Veg Burger Combo",  Rest = "Burger Nation",   Price = "₹180", Emoji = "🍔", Status = "Preparing" },
-            };
-        }
-        @foreach (var item in recentItems)
-        {
-            <div style="background:var(--bg);border-radius:12px;padding:16px;min-width:200px;flex-shrink:0;cursor:pointer;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--card-hover)'" onmouseout="this.style.boxShadow='none'">
-                <div style="font-size:2.2rem;margin-bottom:8px;">@item.Emoji</div>
-                <div style="font-weight:700;font-size:0.9rem;color:var(--dark);margin-bottom:2px;">@item.Name</div>
-                <div style="font-size:0.78rem;color:var(--dark-light);margin-bottom:8px;">@item.Rest</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-weight:700;color:var(--orange);">@item.Price</span>
-                    <a href="/Home/Orders" class="ets-btn ets-btn--primary" style="padding:5px 12px;font-size:0.78rem;">Reorder</a>
-                </div>
+@if (Context.Session.GetInt32("UserId") != null)
+{
+    var recentOrders = ViewBag.RecentOrders as IEnumerable<dynamic>;
+    if (recentOrders != null && recentOrders.Any())
+    {
+        <!-- ====== QUICK REORDER SECTION ====== -->
+        <section class="ets-section" style="background:#fff; padding-bottom:40px;">
+            <div class="ets-section__header">
+                <h2 class="ets-section__title">📦 My Recent Orders</h2>
+                <a href="/Home/Orders" class="ets-section__link" id="view-all-orders-link">
+                    View all <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-        }
-    </div>
-</section>
+            <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none; -ms-overflow-style: none;">
+                <style>
+                    .ets-recent-order-card {
+                        background: #f8f9fa;
+                        border-radius: 16px;
+                        padding: 16px;
+                        min-width: 220px;
+                        flex-shrink: 0;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        border: 1px solid #eee;
+                    }
+                    .ets-recent-order-card:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+                        border-color: var(--orange);
+                    }
+                    .ets-reorder-btn {
+                        background: var(--orange);
+                        color: #fff;
+                        padding: 6px 16px;
+                        border-radius: 10px;
+                        font-size: 0.8rem;
+                        font-weight: 700;
+                        text-decoration: none;
+                        transition: all 0.2s;
+                    }
+                    .ets-reorder-btn:hover {
+                        background: #ff5c00;
+                        color: #fff;
+                        box-shadow: 0 4px 10px rgba(252, 128, 25, 0.3);
+                    }
+                </style>
+                
+                @foreach (var order in recentOrders)
+                {
+                    string dishName = order.DishName;
+                    string emoji = "🍱";
+                    if (dishName.ToLower().Contains("biryani")) emoji = "🍛";
+                    else if (dishName.ToLower().Contains("pizza")) emoji = "🍕";
+                    else if (dishName.ToLower().Contains("burger")) emoji = "🍔";
+                    else if (dishName.ToLower().Contains("noodle") || dishName.ToLower().Contains("chowmein")) emoji = "🍜";
+                    else if (dishName.ToLower().Contains("cake") || dishName.ToLower().Contains("pastry")) emoji = "🍰";
+                    else if (dishName.ToLower().Contains("juice") || dishName.ToLower().Contains("shake")) emoji = "🥤";
+                    else if (dishName.ToLower().Contains("dosa") || dishName.ToLower().Contains("idli")) emoji = "🍽️";
+                    else if (dishName.ToLower().Contains("shawarma") || dishName.ToLower().Contains("roll")) emoji = "🌯";
+
+                    <div class="ets-recent-order-card">
+                        <div style="font-size:2.5rem;margin-bottom:12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">@emoji</div>
+                        <div style="font-weight:700;font-size:1rem;color:var(--dark);margin-bottom:2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@order.DishName">@order.DishName</div>
+                        <div style="font-size:0.8rem;color:var(--dark-light);margin-bottom:12px;">@order.RestaurantName</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-weight:800;color:var(--orange);font-size:1.1rem;">₹@order.Price</span>
+                            <a href="/Home/Orders" class="ets-reorder-btn">Reorder</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+}
 
 @section Scripts {
 <script>

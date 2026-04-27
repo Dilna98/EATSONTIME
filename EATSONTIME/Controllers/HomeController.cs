@@ -20,6 +20,8 @@ namespace EATSONTIME.Controllers
 
         public async Task<IActionResult> Index(string? search, string? category, string? dish)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
             // Curated list of dishes for the "What's on your mind?" carousel (matching our premium images)
             var curatedDishes = new List<string> { "Biryani", "Pizza", "Dosa", "Noodles", "Shawarma", "Cake", "Juice" };
             
@@ -89,6 +91,32 @@ namespace EATSONTIME.Controllers
             if (!restaurants.Any() && string.IsNullOrEmpty(dish) && string.IsNullOrEmpty(search))
             {
                 restaurants = GetSampleRestaurants();
+            }
+
+            // --- FETCH RECENT ORDERS IF LOGGED IN ---
+            if (userId != null)
+            {
+                // Fetch the first item from each of the last 5 orders
+                var recentOrders = await (from o in _db.Order_Tb
+                                         join od in _db.OrderDetail_Tb on o.OrderId equals od.OrderId
+                                         join f in _db.FoodItems_Tb on od.FoodId equals f.FoodId
+                                         join r in _db.Restaurant_Tb on f.RestaurentId equals r.RestaurentId
+                                         where o.UserId == userId
+                                         orderby o.OrderDate descending
+                                         select new
+                                         {
+                                             o.OrderId,
+                                             DishName = f.Name,
+                                             RestaurantName = r.Name,
+                                             Price = od.Price,
+                                             o.Status
+                                         })
+                                         .GroupBy(x => x.OrderId) // Group by order to just pick one item per order
+                                         .Select(g => g.FirstOrDefault())
+                                         .Take(5)
+                                         .ToListAsync();
+
+                ViewBag.RecentOrders = recentOrders;
             }
 
             ViewBag.Restaurants = restaurants;
