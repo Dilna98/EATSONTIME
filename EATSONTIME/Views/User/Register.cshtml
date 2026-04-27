@@ -1,0 +1,72 @@
+@model EATSONTIME.Models.User
+@{
+    ViewData["Title"] = "Sign up";
+    Layout = "_AuthLayout";
+}
+
+<div class="ets-auth-page">
+    <div class="ets-auth-card">
+        <a href="/" class="ets-auth-close" title="Close">
+            <i class="fas fa-times"></i>
+        </a>
+
+        <div class="ets-auth-header-row">
+            <div class="ets-auth-header-left">
+                <h1 class="ets-auth-title">Sign up</h1>
+                <p class="ets-auth-switch">
+                    or <a href="/User/Login">login to your account</a>
+                </p>
+                <div class="ets-auth-underline"></div>
+            </div>
+            <div class="ets-auth-image-circle">
+                <img src="~/images/swiggy-wrap.png" alt="Food Wrap" asp-append-version="true" />
+            </div>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="ets-auth-error">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            
+            <div class="ets-auth-fields">
+                <div class="ets-auth-input-box">
+                    <label class="ets-auth-label">Phone number</label>
+                    <input asp-for="Mobile" class="ets-auth-input" placeholder="Enter your mobile number" required maxlength="15" />
+                    <span asp-validation-for="Mobile" class="text-danger small"></span>
+                </div>
+                <div class="ets-auth-input-box">
+                    <label class="ets-auth-label">Name</label>
+                    <input asp-for="Name" class="ets-auth-input" placeholder="Enter your full name" required />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="ets-auth-input-box">
+                    <label class="ets-auth-label">Email</label>
+                    <input asp-for="Email" class="ets-auth-input" placeholder="name@example.com" required />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="ets-auth-input-box">
+                    <label class="ets-auth-label">Delivery Address</label>
+                    <input asp-for="Address" class="ets-auth-input" placeholder="Enter your delivery address (optional)" />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <a class="ets-auth-referral">Have a referral code?</a>
+
+            <button type="submit" class="ets-auth-submit">CONTINUE</button>
+        </form>
+
+        <p class="ets-auth-legal">
+            By creating an account, I accept the <strong>Terms & Conditions & Privacy Policy</strong>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

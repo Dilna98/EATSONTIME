@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_AuthLayout";
+}
+
+<div class="ets-auth-page">
+    <div class="ets-auth-card">
+        <a href="/" class="ets-auth-close" title="Close">
+            <i class="fas fa-times"></i>
+        </a>
+
+        <div class="ets-auth-header-row">
+            <div class="ets-auth-header-left">
+                <h1 class="ets-auth-title">Login</h1>
+                <p class="ets-auth-switch">
+                    or <a href="/User/Register">create an account</a>
+                </p>
+                <div class="ets-auth-underline"></div>
+            </div>
+            <div class="ets-auth-image-circle">
+                <img src="~/images/swiggy-wrap.png" alt="Food Wrap" asp-append-version="true" />
+            </div>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="ets-auth-error">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            
+            <div class="ets-auth-fields">
+                <div class="ets-auth-input-box">
+                    <label class="ets-auth-label">Phone number</label>
+                    <input type="text" name="mobile" class="ets-auth-input" placeholder="Enter your mobile number" required maxlength="15" />
+                </div>
+            </div>
+
+            <button type="submit" class="ets-auth-submit">LOGIN</button>
+        </form>
+
+        <p class="ets-auth-legal">
+            By clicking on Login, I accept the <strong>Terms & Conditions & Privacy Policy</strong>
+        </p>
+    </div>
+</div>

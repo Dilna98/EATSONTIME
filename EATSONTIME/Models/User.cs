@@ -1,28 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EATSONTIME.Models
 {
+    [Table("User_Tb")]
     public class User
     {
         [Key]
         public int UserId { get; set; }
+
         [Required]
+        [StringLength(50)]
         public string Name { get; set; }
+
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid Email")]
+        [StringLength(100)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
-        [DataType(DataType.Password)]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "passwored must be between 6 and 20 letters")]
-        public string Password { get; set; }
         [Required]
-        public string Phone { get; set; }
-        [Required]
-        public string Role { get; set; }
-        [Required]
-        public string Address { get; set; }
+        [StringLength(50)]
+        public string Mobile { get; set; }
 
-
+        [StringLength(100)]
+        public string? Address { get; set; }
     }
 }

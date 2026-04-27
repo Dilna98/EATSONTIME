@@ -40,12 +40,28 @@
         </div>
 
         <div class="ets-navbar__actions">
-            <a href="/Home/Orders" class="ets-btn ets-btn--outline" id="navbar-orders-btn">
-                <i class="fas fa-receipt"></i> My Orders
-            </a>
-            <a href="/Restaurant/Register" class="ets-btn ets-btn--outline" id="navbar-partner-btn">
-                <i class="fas fa-store"></i> Partner with us
-            </a>
+            @if (Context.Session.GetInt32("UserId") != null)
+            {
+                <div class="ets-navbar__user">
+                    <i class="fas fa-user-circle"></i> Hi, @Context.Session.GetString("UserName")
+                </div>
+                <a href="/Home/Orders" class="ets-btn ets-btn--outline" id="navbar-orders-btn">
+                    <i class="fas fa-receipt"></i> My Orders
+                </a>
+                <a href="/User/Logout" class="ets-btn ets-btn--outline" id="navbar-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            }
+            else
+            {
+                <a href="/User/Login" class="ets-btn ets-btn--outline" id="navbar-login-btn">
+                    <i class="fas fa-user"></i> Login
+                </a>
+                <a href="/Restaurant/Register" class="ets-btn ets-btn--outline" id="navbar-partner-btn">
+                    <i class="fas fa-store"></i> Partner with us
+                </a>
+            }
+            
             <button class="ets-btn ets-btn--cart" id="navbar-cart-btn">
                 <i class="fas fa-shopping-bag"></i>
                 Cart
@@ -124,6 +140,22 @@
             <text>document.addEventListener('DOMContentLoaded', () => showToast('@TempData["Success"]'));</text>
         }
     </script>
+
+    <style>
+        .ets-navbar__user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 0.95rem;
+            margin-right: 15px;
+        }
+        .ets-navbar__user i {
+            color: var(--orange);
+            font-size: 1.2rem;
+        }
+    </style>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -976,3 +976,170 @@ img { max-width: 100%; }
 .ets-animate-delay-1 { animation-delay: 0.1s; opacity: 0; }
 .ets-animate-delay-2 { animation-delay: 0.2s; opacity: 0; }
 .ets-animate-delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+/* ============================================================
+   AUTHENTICATION VIEWS (Swiggy Style)
+   ============================================================ */
+.ets-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f5;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.ets-auth-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 10px 60px rgba(0,0,0,0.1);
+  border-radius: 2px;
+}
+
+.ets-auth-close {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  font-size: 20px;
+  color: #3d4152;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 10;
+}
+
+.ets-auth-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.ets-auth-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #282c3f;
+  margin: 0 0 4px;
+}
+
+.ets-auth-switch {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #282c3f;
+  margin: 0;
+}
+.ets-auth-switch a {
+  color: #fc8019;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ets-auth-underline {
+  width: 35px;
+  height: 2px;
+  background: #282c3f;
+  margin-top: 15px;
+}
+
+.ets-auth-image-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ets-auth-image-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ets-auth-fields {
+  border: 1px solid #d4d5d9;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.ets-auth-input-box {
+  padding: 10px 16px;
+  border-bottom: 1px solid #d4d5d9;
+}
+.ets-auth-input-box:last-child {
+  border-bottom: none;
+}
+
+.ets-auth-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #93959f;
+  margin-bottom: 2px;
+}
+
+.ets-auth-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #282c3f;
+  padding: 2px 0;
+  background: transparent;
+}
+
+.ets-auth-referral {
+  display: block;
+  color: #5d8ed5;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ets-auth-submit {
+  width: 100%;
+  background: #fc8019;
+  color: #ffffff;
+  border: none;
+  padding: 18px;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 15px;
+}
+.ets-auth-submit:hover { background: #e06b0a; }
+
+.ets-auth-legal {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #686b78;
+  line-height: 1.5;
+  margin: 0;
+}
+.ets-auth-legal strong {
+  color: #282c3f;
+}
+
+.ets-auth-error {
+  background: #fff0f0;
+  color: #db3b3b;
+  padding: 12px 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
