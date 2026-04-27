@@ -6,13 +6,14 @@
   
   /* Best Foods Carousel */
   .ets-food-carousel {
-      display: flex;
-      gap: 32px;
+      display: grid;
+      grid-template-rows: repeat(2, auto);
+      grid-auto-flow: column;
+      gap: 16px 32px;
       overflow-x: auto;
       scrollbar-width: none;
       padding: 20px 0;
       scroll-behavior: smooth;
-      flex-wrap: nowrap;
       -ms-overflow-style: none;
   }
   .ets-food-carousel::-webkit-scrollbar { display: none; }
@@ -21,8 +22,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      min-width: 150px;
+      gap: 8px;
+      min-width: 120px;
       transition: transform 0.3s ease;
       text-align: center;
       flex-shrink: 0;
@@ -30,12 +31,12 @@
   }
   .ets-food-card:hover { transform: scale(1.05); }
   .ets-food-card__img-container {
-      width: 140px;
-      height: 140px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       overflow: hidden;
       background: #fff;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
       border: 3px solid transparent;
       transition: all 0.3s ease;
   }
@@ -43,7 +44,7 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      padding: 10px;
+      padding: 8px;
   }
   .ets-food-card__name {
       font-weight: 700;

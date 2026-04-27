@@ -1,5 +1,5 @@
 @using EATSONTIME.Models
-@model List<Orders>
+@model List<OrderHistoryViewModel>
 @{
     ViewData["Title"] = "My Orders — EATSONTIME";
 
@@ -31,15 +31,6 @@
         new { Label = "Preparing", Icon = "fas fa-fire"            },
         new { Label = "Delivered", Icon = "fas fa-check"           }
     };
-
-    var restaurantNames = new[] { "Biryani Palace", "Pizza Hub", "Burger Nation", "Spice Garden", "Wok & Roll" };
-    var foodItems = new[] {
-        "Chicken Biryani × 2, Raita × 1",
-        "Margherita Pizza × 1, Garlic Bread × 2",
-        "Veg Burger × 2, Fries × 1, Cold Drink × 2",
-        "Paneer Tikka × 1, Jeera Rice × 2",
-        "Fried Rice × 2, Manchurian × 1"
-    };
 }
 
 <div class="ets-orders-page">
@@ -58,12 +49,9 @@
     }
     else
     {
-        @for (int i = 0; i < Model.Count; i++)
+        @foreach (var order in Model)
         {
-            var order = Model[i];
-            var step  = GetStep(order.Status ?? "Placed");
-            var rName = restaurantNames[i % restaurantNames.Length];
-            var items = foodItems[i % foodItems.Length];
+            var step = GetStep(order.Status ?? "Placed");
 
             <div class="ets-order-card ets-animate" id="order-card-@order.OrderId">
 
@@ -71,7 +59,7 @@
                 <div class="ets-order-card__header">
                     <div>
                         <div class="ets-order-card__id">Order #@order.OrderId</div>
-                        <div class="ets-order-card__restaurant">🍽️ @rName</div>
+                        <div class="ets-order-card__restaurant">🍽️ @order.RestaurantName</div>
                     </div>
                     <div>
                         <div class="ets-order-card__date">
@@ -111,7 +99,7 @@
                 <!-- Items -->
                 <div class="ets-order-card__items">
                     <div class="ets-order-card__item">
-                        <span style="color:var(--dark-light);">@items</span>
+                        <span style="color:var(--dark-light);">@order.ItemsSummary</span>
                     </div>
                     <div class="ets-order-card__total">
                         <span>Total Paid</span>

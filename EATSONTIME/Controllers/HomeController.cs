@@ -2,6 +2,7 @@ using EATSONTIME.DATA;
 using EATSONTIME.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 
 namespace EATSONTIME.Controllers
@@ -76,18 +77,55 @@ namespace EATSONTIME.Controllers
 
         public async Task<IActionResult> Orders()
         {
-            // In a real app, filter by logged-in UserId from session
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            // Fetch orders for the logged-in user
             var orders = await _db.Order_Tb
+                .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
-            // Sample orders for demonstration if DB is empty
-            if (!orders.Any())
+            var orderViewModels = new List<OrderHistoryViewModel>();
+
+            foreach (var order in orders)
             {
-                orders = GetSampleOrders();
+                // Get details for this order
+                var details = await (from od in _db.OrderDetail_Tb
+                                     join f in _db.FoodItems_Tb on od.FoodId equals f.FoodId
+                                     join r in _db.Restaurant_Tb on f.RestaurentId equals r.RestaurentId
+                                     where od.OrderId == order.OrderId
+                                     select new
+                                     {
+                                         f.Name,
+                                         od.Quantity,
+                                         od.Price,
+                                         RestaurantName = r.Name
+                                     }).ToListAsync();
+
+                var vm = new OrderHistoryViewModel
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    TotalAmount = order.TotalAmount,
+                    Status = order.Status,
+                    RestaurantName = details.FirstOrDefault()?.RestaurantName ?? "Unknown Restaurant",
+                    ItemsSummary = string.Join(", ", details.Select(d => $"{d.Name} × {d.Quantity}")),
+                    Items = details.Select(d => new OrderItemDetail
+                    {
+                        FoodName = d.Name,
+                        Quantity = d.Quantity,
+                        Price = d.Price
+                    }).ToList()
+                };
+
+                orderViewModels.Add(vm);
             }
 
-            return View(orders);
+            return View(orderViewModels);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
