@@ -20,4 +20,24 @@ namespace EATSONTIME.Models
         public int Quantity { get; set; }
         public decimal Price { get; set; }
     }
+
+    public class MenuViewModel
+    {
+        public int FoodId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public string CategoryName { get; set; }
+    }
+
+    public class CartViewModel
+    {
+        public int CartId { get; set; }
+        public int FoodId { get; set; }
+        public string FoodName { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+        public string RestaurantName { get; set; }
+        public decimal Subtotal => Price * Quantity;
+    }
 }

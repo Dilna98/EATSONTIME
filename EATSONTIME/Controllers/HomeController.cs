@@ -139,7 +139,7 @@ namespace EATSONTIME.Controllers
 
             // Fetch orders for the logged-in user
             var orders = await _db.Order_Tb
-                .Where(o => o.UserId == userId)
+                .Where(o => o.UserId == (int)userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -180,6 +180,137 @@ namespace EATSONTIME.Controllers
             }
 
             return View(orderViewModels);
+        }
+
+        // --- NEW ORDERING ACTIONS ---
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var restaurant = await _db.Restaurant_Tb.FirstOrDefaultAsync(r => r.RestaurentId == id);
+            if (restaurant == null) return NotFound();
+
+            var foodItems = await (from f in _db.FoodItems_Tb
+                                  join c in _db.Categories_Tb on f.CategoryId equals c.CategoryId
+                                  where f.RestaurentId == id
+                                  select new MenuViewModel
+                                  {
+                                      FoodId = f.FoodId,
+                                      Name = f.Name,
+                                      Description = f.Description,
+                                      Price = f.Price,
+                                      CategoryName = c.CategoryName
+                                  }).ToListAsync();
+
+            ViewBag.Restaurant = restaurant;
+            return View(foodItems);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(int foodId, int quantity = 1)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Json(new { success = false, message = "Please login first" });
+
+            var existingItem = await _db.Cart_Tb.FirstOrDefaultAsync(c => c.UserId == userId && c.FoodId == foodId);
+            if (existingItem != null)
+            {
+                existingItem.Quantity += quantity;
+            }
+            else
+            {
+                var cartItem = new Cart
+                {
+                    UserId = (int)userId,
+                    FoodId = foodId,
+                    Quantity = quantity
+                };
+                _db.Cart_Tb.Add(cartItem);
+            }
+
+            await _db.SaveChangesAsync();
+            return Json(new { success = true, message = "Added to cart" });
+        }
+
+        public async Task<IActionResult> Cart()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "User");
+
+            var cartItems = await (from c in _db.Cart_Tb
+                                 join f in _db.FoodItems_Tb on c.FoodId equals f.FoodId
+                                 join r in _db.Restaurant_Tb on f.RestaurentId equals r.RestaurentId
+                                 where c.UserId == userId
+                                 select new CartViewModel
+                                 {
+                                     CartId = c.CartId,
+                                     FoodId = f.FoodId,
+                                     FoodName = f.Name,
+                                     Price = f.Price,
+                                     Quantity = c.Quantity,
+                                     RestaurantName = r.Name
+                                 }).ToListAsync();
+
+            return View(cartItems);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromCart(int cartId)
+        {
+            var item = await _db.Cart_Tb.FindAsync(cartId);
+            if (item != null)
+            {
+                _db.Cart_Tb.Remove(item);
+                await _db.SaveChangesAsync();
+            }
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PlaceOrder()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "User");
+
+            var cartItems = await (from c in _db.Cart_Tb
+                                 join f in _db.FoodItems_Tb on c.FoodId equals f.FoodId
+                                 where c.UserId == userId
+                                 select new { c.FoodId, c.Quantity, f.Price }).ToListAsync();
+
+            if (!cartItems.Any()) return RedirectToAction("Index");
+
+            var totalAmount = cartItems.Sum(i => i.Price * i.Quantity);
+
+            var order = new Orders
+            {
+                UserId = (int)userId,
+                OrderDate = DateTime.Now,
+                TotalAmount = totalAmount,
+                Status = "Pending"
+            };
+
+            _db.Order_Tb.Add(order);
+            await _db.SaveChangesAsync(); // Generates OrderId
+
+            foreach (var item in cartItems)
+            {
+                var detail = new OrderDetails
+                {
+                    OrderId = order.OrderId,
+                    FoodId = item.FoodId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                };
+                _db.OrderDetail_Tb.Add(detail);
+            }
+
+            // Clear Cart
+            var userCart = _db.Cart_Tb.Where(c => c.UserId == userId);
+            _db.Cart_Tb.RemoveRange(userCart);
+
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "🎉 Order placed successfully!";
+            return RedirectToAction("Orders");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

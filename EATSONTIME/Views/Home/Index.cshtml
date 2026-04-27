@@ -592,9 +592,9 @@
                 var hasImg = restaurantImages.ContainsKey(r.Name);
                 var imgPath = hasImg ? restaurantImages[r.Name] : "";
 
-                <div class="ets-dineout-card ets-animate ets-animate-delay-@((i % 3) + 1)"
-                     id="restaurant-card-@r.RestaurentId"
-                     onclick="window.location='#'">
+                    <div class="ets-dineout-card ets-animate ets-animate-delay-@((i % 3) + 1)"
+                         id="restaurant-card-@r.RestaurentId"
+                         onclick="window.location='/Home/Details/@r.RestaurentId'">
                     
                     <div class="ets-dineout-card__img-wrap">
                         @if (hasImg)

@@ -1,0 +1,176 @@
+@model List<EATSONTIME.Models.MenuViewModel>
+@{
+    var restaurant = ViewBag.Restaurant as EATSONTIME.Models.Restaurant;
+    ViewData["Title"] = restaurant?.Name + " Menu";
+}
+
+@section Styles {
+<style>
+    .menu-header {
+        background: #fff;
+        padding: 40px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 30px;
+    }
+    .restaurant-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .restaurant-name {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #282c3f;
+        margin-bottom: 8px;
+    }
+    .restaurant-meta {
+        color: #686b78;
+        font-size: 0.9rem;
+    }
+    .menu-section {
+        background: #fff;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .menu-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 24px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .item-info { flex: 1; padding-right: 20px; }
+    .item-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #3e4152;
+        margin-bottom: 4px;
+    }
+    .item-price {
+        font-weight: 600;
+        color: #3e4152;
+        margin-bottom: 8px;
+    }
+    .item-desc {
+        font-size: 0.9rem;
+        color: rgba(40,44,63,.45);
+        line-height: 1.3;
+    }
+    .item-action {
+        width: 120px;
+        text-align: center;
+    }
+    .add-btn {
+        background: #fff;
+        color: #60b246;
+        border: 1px solid #d4d5d9;
+        padding: 8px 30px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+    .add-btn:hover {
+        box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+    }
+    .category-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #282c3f;
+        margin: 40px 0 20px;
+        padding-left: 10px;
+        border-left: 4px solid var(--orange);
+    }
+</style>
+}
+
+<div class="container mt-4">
+    <div class="menu-header">
+        <div class="restaurant-info">
+            <div>
+                <h1 class="restaurant-name">@restaurant?.Name</h1>
+                <div class="restaurant-meta">
+                    <p><i class="fas fa-map-marker-alt mr-2"></i> @restaurant?.Address</p>
+                    <p><i class="fas fa-phone mr-2"></i> @restaurant?.Phone</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div style="background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; text-align: center;">
+                    <div style="color: #24963f; font-weight: 800; font-size: 1.2rem;">
+                        <i class="fas fa-star"></i> 4.2
+                    </div>
+                    <div style="font-size: 0.7rem; color: #686b78; border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px; font-weight: 700;">
+                        100+ RATINGS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h3>No items available in the menu yet.</h3>
+        </div>
+    }
+    else
+    {
+        var groupedItems = Model.GroupBy(i => i.CategoryName);
+        foreach (var group in groupedItems)
+        {
+            <h2 class="category-title">@group.Key (@group.Count())</h2>
+            <div class="menu-section">
+                @foreach (var item in group)
+                {
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-name">@item.Name</div>
+                            <div class="item-price">₹@item.Price</div>
+                            <div class="item-desc">@item.Description</div>
+                        </div>
+                        <div class="item-action">
+                            <button class="add-btn" onclick="addToCart(@item.FoodId)">ADD</button>
+                            <div style="font-size: 0.7rem; color: #686b78; margin-top: 8px;">Customisable</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+<script>
+    function addToCart(foodId) {
+        $.ajax({
+            url: '/Home/AddToCart',
+            type: 'POST',
+            data: { foodId: foodId, quantity: 1 },
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added!',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please Login',
+                        text: response.message,
+                        footer: '<a href="/User/Login">Go to Login</a>'
+                    });
+                }
+            }
+        });
+    }
+</script>
+}

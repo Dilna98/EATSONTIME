@@ -1,0 +1,150 @@
+@model List<EATSONTIME.Models.CartViewModel>
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+@section Styles {
+<style>
+    .cart-container {
+        background: #e9ecee;
+        min-height: calc(100vh - 80px);
+        padding: 30px 0;
+    }
+    .cart-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .cart-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #282c3f;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f1f6;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-name {
+        font-weight: 600;
+        color: #3e4152;
+        font-size: 1rem;
+    }
+    .item-rest {
+        font-size: 0.8rem;
+        color: #686b78;
+    }
+    .quantity-box {
+        display: flex;
+        align-items: center;
+        border: 1px solid #d4d5d9;
+        padding: 5px 10px;
+        color: #60b246;
+        font-weight: 700;
+    }
+    .total-section {
+        border-top: 2px solid #282c3f;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+    .total-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #282c3f;
+    }
+    .checkout-btn {
+        background: #60b246;
+        color: #fff;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-top: 30px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .checkout-btn:hover {
+        background: #509e3a;
+    }
+    .empty-cart {
+        text-align: center;
+        padding: 50px 0;
+    }
+    .empty-cart i {
+        font-size: 4rem;
+        color: #dbdce0;
+        margin-bottom: 20px;
+    }
+</style>
+}
+
+<div class="cart-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="cart-card">
+                    <h1 class="cart-title">
+                        <span><i class="fas fa-shopping-cart mr-2"></i> Your Cart</span>
+                        <span class="badge badge-success">@Model.Count Items</span>
+                    </h1>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-basket"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Good food is always just a few clicks away!</p>
+                            <a href="/" class="btn btn-primary mt-3">Browse Restaurants</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cart-items-list">
+                            @foreach (var item in Model)
+                            {
+                                <div class="cart-item">
+                                    <div>
+                                        <div class="item-name">@item.FoodName</div>
+                                        <div class="item-rest">@item.RestaurantName</div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="quantity-box mr-4">
+                                            @item.Quantity
+                                        </div>
+                                        <div class="item-price mr-4">₹@item.Subtotal</div>
+                                        <form asp-action="RemoveFromCart" method="post" style="display:inline;">
+                                            <input type="hidden" name="cartId" value="@item.CartId" />
+                                            <button type="submit" class="btn btn-sm text-danger"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="total-section">
+                            <div class="total-line">
+                                <span>Bill Total</span>
+                                <span>₹@Model.Sum(i => i.Subtotal)</span>
+                            </div>
+                        </div>
+
+                        <form asp-action="PlaceOrder" method="post">
+                            <button type="submit" class="checkout-btn">CHECKOUT & PLACE ORDER</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
