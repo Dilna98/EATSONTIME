@@ -22,17 +22,11 @@ namespace EATSONTIME.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
 
-            // Curated list of dishes for the "What's on your mind?" carousel (matching our premium images)
-            var curatedDishes = new List<string> { "Biryani", "Pizza", "Dosa", "Noodles", "Shawarma", "Cake", "Juice" };
-            
-            // Fetch distinct food items from DB to see if any others should be added
-            var dbFoodItems = await _db.FoodItems_Tb
+            // Fetch distinct food items from DB for the "What's on your mind?" carousel
+            var carouselDishes = await _db.FoodItems_Tb
                 .Select(f => f.Name)
                 .Distinct()
                 .ToListAsync();
-
-            // Combine curated with DB items, keeping curated first
-            var carouselDishes = curatedDishes.Union(dbFoodItems).ToList();
 
             // Fetch restaurants from DB - Group by name to show only distinct restaurants
             var restaurantsQuery = _db.Restaurant_Tb.AsQueryable();
